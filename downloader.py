@@ -10,12 +10,19 @@ class Youtube:
         self.sent_log = None
         self.options = {
             # 'format': 'best',
-            'logger': self.MyLogger(self.logger),
+            'logger': self.MyLogger(self.log_manager),
             'progress_hooks': [self.my_hook],
-            'outtmpl': DOWNLOAD_DST + '%(id)s.%(ext)s'
+            'outtmpl': DOWNLOAD_DST + '%(title)s.%(ext)s'
         }
         self.link = link
         self.filepath = None
+
+    def log_manager(self, level, message):
+        if level == 'debug':
+            if 'Merging formats into' in message:
+                self.filepath = message.split('"')[1]
+
+        self.logger(message)
 
     def get_info(self):
         result = youtube_dl.YoutubeDL().list_formats(self.link)
@@ -26,14 +33,13 @@ class Youtube:
             self.logger = logger
 
         def debug(self, msg):
-            # self.logger(msg)
-            pass
+            self.logger('debug', msg)
 
         def warning(self, msg):
-            self.logger(msg)
+            self.logger('warning', msg)
 
         def error(self, msg):
-            self.logger(msg)
+            self.logger('error', msg)
 
     def my_hook(self, d):
         def message_generator(input):
@@ -58,9 +64,4 @@ class Youtube:
         with youtube_dl.YoutubeDL(self.options) as ytdl:
             print(self.link)
             ytdl.download([self.link])
-
-            splited_path = self.filepath.split('.')
-            if len(splited_path) == 3:
-                self.filepath = splited_path[0] + '.' + self.filepath[2]
-
             os.rename(self.filepath, self.filepath.replace(" ", "_"))
