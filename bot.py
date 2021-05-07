@@ -1,6 +1,10 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from setting import BOT_TOKEN, DOWNLOAD_PATH_PREFIX
+from setting import BOT_TOKEN, DOWNLOAD_PATH_PREFIX, DOWNLOAD_DST
 from downloader import Youtube
+import shutil
+from zipfile import ZipFile
+import os
+from os.path import basename
 
 
 def text_callback(update, context):
@@ -16,6 +20,20 @@ def text_callback(update, context):
         youtube = Youtube(link, message.reply_text)
         youtube.download()
         message.reply_text(f'{DOWNLOAD_PATH_PREFIX}{youtube.filepath.split("/")[-1].replace(" ", "_")}')
+    elif command == 'files':
+        order = others[0]
+        if order == 'zip':
+            zip_file_name = 'files.zip'
+            with ZipFile(zip_file_name, 'w') as zipObj:
+                for folder, _, filenames in os.walk(DOWNLOAD_DST):
+                    for filename in filenames:
+                        file_path = os.path.join(folder, filename)
+                        zipObj.write(file_path, basename(file_path))
+
+            message.reply_text(f'files zipped\n{DOWNLOAD_PATH_PREFIX}{zip_file_name}')
+        elif order == 'rm':
+            shutil.rmtree(DOWNLOAD_DST)
+            message.reply_text('remove files')
     else:
         message.reply_text('i dont know and dont care :]')
 
