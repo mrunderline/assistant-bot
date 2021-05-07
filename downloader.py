@@ -21,8 +21,8 @@ class Youtube:
         if level == 'debug':
             if 'Merging formats into' in message:
                 self.filepath = message.split('"')[1]
-
-        self.logger(message)
+        else:
+            self.logger(message)
 
     def get_info(self):
         result = youtube_dl.YoutubeDL().list_formats(self.link)
