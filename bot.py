@@ -24,9 +24,11 @@ def text_callback(update, context):
         order = others[0]
         if order == 'zip':
             zip_file_name = 'files.zip'
-            with ZipFile(zip_file_name, 'w') as zipObj:
+            with ZipFile(DOWNLOAD_DST + zip_file_name, 'w') as zipObj:
                 for folder, _, filenames in os.walk(DOWNLOAD_DST):
                     for filename in filenames:
+                        if filename == zip_file_name:
+                            continue
                         file_path = os.path.join(folder, filename)
                         zipObj.write(file_path, basename(file_path))
 
