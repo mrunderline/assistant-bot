@@ -40,6 +40,10 @@ def text_callback(update, context):
             message.reply_text('remove files')
         elif order == 'list':
             message.reply_text('\n'.join([f for f in os.listdir(DOWNLOAD_DST)]))
+    elif command == 'ssl':
+        site = others[0]
+        stream = os.popen(f'bash scripts/ssl.sh {site}')
+        message.reply_text(stream.read())
     else:
         message.reply_text('i dont know and dont care :]')
 
