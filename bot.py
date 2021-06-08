@@ -15,6 +15,7 @@ def text_callback(update, context):
         message.reply_text('i dont know and dont care :]')
 
     command, *others = text.split(' ')
+    command = command.lower()
     if command == 'yt':
         link = others[0]
         youtube = Youtube(link, message.reply_text)
