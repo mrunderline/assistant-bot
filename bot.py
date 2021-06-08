@@ -13,6 +13,7 @@ def text_callback(update, context):
 
     if text.count(' ') < 1:
         message.reply_text('i dont know and dont care :]')
+        return
 
     command, *others = text.split(' ')
     command = command.lower()
@@ -37,6 +38,8 @@ def text_callback(update, context):
         elif order == 'rm':
             shutil.rmtree(DOWNLOAD_DST)
             message.reply_text('remove files')
+        elif order == 'list':
+            message.reply_text('\n'.join([f for f in os.listdir(DOWNLOAD_DST)]))
     else:
         message.reply_text('i dont know and dont care :]')
 
